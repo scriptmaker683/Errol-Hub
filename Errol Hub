@@ -1,0 +1,280 @@
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Create main ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "ScriptHubGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- ====== Splash Screen ======
+local splashFrame = Instance.new("Frame")
+splashFrame.Size = UDim2.new(1, 0, 1, 0)
+splashFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+splashFrame.Parent = gui
+
+local splashText = Instance.new("TextLabel")
+splashText.Text = "Errol Hub"
+splashText.Size = UDim2.new(0.6, 0, 0.2, 0)
+splashText.Position = UDim2.new(0.5, 0, 0.4, 0)
+splashText.AnchorPoint = Vector2.new(0.5, 0.5)
+splashText.BackgroundTransparency = 1
+splashText.TextColor3 = Color3.fromRGB(180, 0, 255)
+splashText.Font = Enum.Font.GothamBold
+splashText.TextSize = 56
+splashText.Parent = splashFrame
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Text = "loading up the buttons and GUI"
+loadingText.Size = UDim2.new(0.6, 0, 0.1, 0)
+loadingText.Position = UDim2.new(0.5, 0, 0.6, 0)
+loadingText.AnchorPoint = Vector2.new(0.5, 0.5)
+loadingText.BackgroundTransparency = 1
+loadingText.TextColor3 = Color3.fromRGB(180, 0, 255)
+loadingText.Font = Enum.Font.Gotham
+loadingText.TextSize = 22
+loadingText.Parent = splashFrame
+
+-- Glow
+local stroke = Instance.new("UIStroke")
+stroke.Parent = splashText
+stroke.Color = Color3.fromRGB(180, 0, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0
+
+local tweenInfo = TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+local tweenStroke = TweenService:Create(stroke, tweenInfo, {Transparency = 0.7})
+local tweenTextColor = TweenService:Create(splashText, tweenInfo, {TextColor3 = Color3.fromRGB(255, 100, 255)})
+tweenStroke:Play()
+tweenTextColor:Play()
+
+-- ====== Main GUI ======
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 110, 0, 40)
+toggleButton.Position = UDim2.new(1, -20, 0, 10)
+toggleButton.AnchorPoint = Vector2.new(1, 0)
+toggleButton.Text = "Click me, Honey"
+toggleButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Font = Enum.Font.SourceSansBold
+toggleButton.TextSize = 16
+toggleButton.Parent = gui
+Instance.new("UICorner", toggleButton)
+
+local pingLabel = Instance.new("TextLabel")
+pingLabel.Size = UDim2.new(0, 120, 0, 24)
+pingLabel.Position = UDim2.new(1, -20, 0, 55)
+pingLabel.AnchorPoint = Vector2.new(1, 0)
+pingLabel.BackgroundTransparency = 0.7
+pingLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+pingLabel.TextColor3 = Color3.new(1, 1, 1)
+pingLabel.Font = Enum.Font.SourceSans
+pingLabel.TextSize = 14
+pingLabel.Text = "Ping: -- ms | FPS: --"
+pingLabel.Parent = gui
+Instance.new("UICorner", pingLabel)
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0.9, 0, 0.85, 0)
+mainFrame.Position = UDim2.new(0.05, 0, 0.075, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = false
+mainFrame.Parent = gui
+Instance.new("UICorner", mainFrame)
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+-- Owner and credits
+local ownerLabel = Instance.new("TextLabel")
+ownerLabel.Size = UDim2.new(0, 300, 0, 30)
+ownerLabel.Position = UDim2.new(0, 10, 0, 5)
+ownerLabel.BackgroundTransparency = 1
+ownerLabel.Text = "Owner: Errol Ramirez"
+ownerLabel.TextColor3 = Color3.new(1, 1, 1)
+ownerLabel.Font = Enum.Font.SourceSansBold
+ownerLabel.TextSize = 20
+ownerLabel.TextXAlignment = Enum.TextXAlignment.Left
+ownerLabel.Parent = mainFrame
+
+local creditsLabel = Instance.new("TextLabel")
+creditsLabel.Size = UDim2.new(1, -20, 0, 40)
+creditsLabel.Position = UDim2.new(0, 10, 0, 40)
+creditsLabel.BackgroundTransparency = 1
+creditsLabel.Text = "I'm grateful for you guys using my script. You can find me on Facebook with a pure white profile."
+creditsLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+creditsLabel.Font = Enum.Font.SourceSans
+creditsLabel.TextSize = 14
+creditsLabel.TextWrapped = true
+creditsLabel.TextXAlignment = Enum.TextXAlignment.Left
+creditsLabel.TextYAlignment = Enum.TextYAlignment.Top
+creditsLabel.Parent = mainFrame
+
+-- Tab bar
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, -20, 0, 40)
+tabBar.Position = UDim2.new(0, 10, 0, 85)
+tabBar.BackgroundTransparency = 1
+tabBar.Parent = mainFrame
+
+local tabLayout = Instance.new("UIListLayout")
+tabLayout.FillDirection = Enum.FillDirection.Horizontal
+tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+tabLayout.Padding = UDim.new(0, 10)
+tabLayout.Parent = tabBar
+
+local sectionsContainer = Instance.new("Frame")
+sectionsContainer.Size = UDim2.new(1, -20, 1, -130)
+sectionsContainer.Position = UDim2.new(0, 10, 0, 130)
+sectionsContainer.BackgroundTransparency = 1
+sectionsContainer.ClipsDescendants = true
+sectionsContainer.Parent = mainFrame
+
+local tabs, sections = {}, {}
+
+local function switchTab(selectedName)
+	for name, btn in pairs(tabs) do
+		local isSelected = (name == selectedName)
+		btn.BackgroundColor3 = isSelected and Color3.fromRGB(180, 0, 255) or Color3.fromRGB(45, 45, 45)
+		btn.TextColor3 = isSelected and Color3.new(1, 1, 1) or Color3.fromRGB(200, 200, 200)
+		sections[name].Visible = isSelected
+	end
+end
+
+local function selectTab(name)
+	switchTab(name)
+end
+
+local function createButton(parent, text, scriptUrl)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 44)
+	btn.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 18
+	btn.Text = text
+	btn.Parent = parent
+	Instance.new("UICorner", btn)
+
+	btn.MouseButton1Click:Connect(function()
+		if scriptUrl and scriptUrl ~= "" then
+			local success, err = pcall(function()
+				loadstring(game:HttpGet(scriptUrl))()
+			end)
+			if not success then
+				warn("Failed to load script: " .. err)
+			end
+		end
+	end)
+	return btn
+end
+
+local function createTab(name)
+	local tabBtn = Instance.new("TextButton")
+	tabBtn.Size = UDim2.new(0, 140, 1, 0)
+	tabBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	tabBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+	tabBtn.Font = Enum.Font.SourceSansBold
+	tabBtn.TextSize = 18
+	tabBtn.Text = name
+	tabBtn.Parent = tabBar
+	Instance.new("UICorner", tabBtn)
+
+	local section = Instance.new("ScrollingFrame")
+	section.Size = UDim2.new(1, 0, 1, 0)
+	section.BackgroundTransparency = 1
+	section.ScrollBarThickness = 8
+	section.Visible = false
+	section.ScrollingDirection = Enum.ScrollingDirection.Y
+	section.CanvasSize = UDim2.new(0, 0, 0, 0)
+	section.Parent = sectionsContainer
+
+	local layout = Instance.new("UIGridLayout")
+	layout.CellSize = UDim2.new(0.5, -12, 0, 44)
+	layout.CellPadding = UDim2.new(0, 8, 0, 8)
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Parent = section
+
+	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		section.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+	end)
+
+	tabs[name] = tabBtn
+	sections[name] = section
+
+	tabBtn.MouseButton1Click:Connect(function()
+		selectTab(name)
+	end)
+
+	return tabBtn, section
+end
+
+-- 🔘 Extra Tab with Fullbright added
+local extraTab, extraSection = createTab("Extra")
+createButton(extraSection, "Auto Hit OP", "https://raw.githubusercontent.com/hbjrev/newhit.github.io/refs/heads/main/hithit.lua")
+createButton(extraSection, "Fullbright", "https://raw.githubusercontent.com/scriptmaker683/Full-b-and-fog/fe017853ff283adc8eeba14bc5de57af4b6cbb50/Fullb")
+createButton(extraSection, "Bring Valuable", "https://raw.githubusercontent.com/fjruie/bringvalue.github.io/refs/heads/main/ringtarails.lua")
+createButton(extraSection, "No Hold Prompt", "https://raw.githubusercontent.com/scriptmaker683/No-hold-prompt-2.0/44df3c099d4b6b36d1a9a3225aa9b888fba3a46f/No%20hold%20prompt")
+createButton(extraSection, "Moondiety", "https://raw.githubusercontent.com/m00ndiety/Full-gui-TP-to-End/refs/heads/main/obf_TELEPORT_TO_END_V2.lua.txt")
+
+local horsesTab, horsesSection = createTab("Special Horses")
+createButton(horsesSection, "Special horse", "https://raw.githubusercontent.com/wehjf/Pestilenceringta.github.io/refs/heads/main/horseringta.lua")
+createButton(horsesSection, "Special horse 2", "https://raw.githubusercontent.com/fjruie/Warhorse.github.io/refs/main/ringta.lua")
+createButton(horsesSection, "Special horse 3", "https://raw.githubusercontent.com/wehjf/famineringta.github.io/refs/heads/main/horseringta.lua")
+createButton(horsesSection, "Special horse 4", "https://raw.githubusercontent.com/fjruie/newdeathtptest.github.io/refs/main/newtest.lua")
+
+local teleportTab, teleportSection = createTab("Teleport")
+createButton(teleportSection, "Tp to Outlaw Camp", "https://raw.githubusercontent.com/fjruie/newshortcamp.github.io/refs/heads/main/ringtashort.lua")
+createButton(teleportSection, "Tp to End", "https://raw.githubusercontent.com/TwoGunVolley/FixedPlease/refs/heads/main/Protected_7197551640341824.txt")
+createButton(teleportSection, "Other Tp", "https://raw.githubusercontent.com/JonasThePogi/DeadRails/refs/heads/main/newloadstring")
+createButton(teleportSection, "Tp to Jade Sword", "https://raw.githubusercontent.com/fjruie/tpjadesword.github.io/refs/heads/main/ringta.lua")
+createButton(teleportSection, "Tp to Jade Mask", "https://raw.githubusercontent.com/ringtaa/jademask.github.io/refs/heads/main/ringta.lua")
+createButton(teleportSection, "Tp Sterling Town", "https://raw.githubusercontent.com/fjruie/newsterlingtp.github.io/refs/heads/main/RINGTA.lua")
+
+-- Auto-select first tab
+local firstTab = next(tabs)
+if firstTab then
+	switchTab(firstTab)
+end
+
+-- Toggle button + key
+toggleButton.MouseButton1Click:Connect(function()
+	mainFrame.Visible = not mainFrame.Visible
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if not gameProcessed and input.KeyCode == Enum.KeyCode.RightShift then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
+
+-- Ping and FPS updates
+local lastUpdate = 0
+RunService.RenderStepped:Connect(function(dt)
+	lastUpdate = lastUpdate + dt
+	if lastUpdate >= 0.5 then
+		local ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
+		local fps = math.floor(1 / dt)
+		pingLabel.Text = string.format("Ping: %d ms | FPS: %d", ping, fps)
+		lastUpdate = 0
+	end
+end)
+
+-- Fade splash
+wait(10)
+local fadeTween = TweenService:Create(splashFrame, TweenInfo.new(1.5), {BackgroundTransparency = 1})
+local textFadeTween = TweenService:Create(splashText, TweenInfo.new(1.5), {TextTransparency = 1})
+local loadingFadeTween = TweenService:Create(loadingText, TweenInfo.new(1.5), {TextTransparency = 1})
+local strokeFadeTween = TweenService:Create(stroke, TweenInfo.new(1.5), {Transparency = 1})
+
+fadeTween:Play()
+textFadeTween:Play()
+loadingFadeTween:Play()
+strokeFadeTween:Play()
+
+fadeTween.Completed:Wait()
+splashFrame:Destroy()
+mainFrame.Visible = true
